@@ -36,7 +36,7 @@ import com.spring.mvc.events.Events_Dto;
  */
 @Controller
 public class HomeController {
-	
+	 
 	@Autowired
 	private SqlSession sqlSession;
 	private HttpSession session;
@@ -79,7 +79,7 @@ public class HomeController {
 		String member_id = (String) session.getAttribute("member_id");
 		List<DtoEmail> email_dto = dao.listRecentMail(member_id);
 		String lefted ="";
-		//ÃÖ½Å¸ÞÀÏ Áö³­ ½Ã°£ ¾Ë·ÁÁÖ´Â Æ÷¹®
+		//ï¿½Ö½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½Ë·ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½
 		for(int j=0;j<email_dto.size();j++) {
 		String day1 = date1.format(day);
 		String day2 = date1.format(email_dto.get(j).getMail_senddate());
@@ -93,22 +93,22 @@ public class HomeController {
 		}
 		if(getday11[0]!=getday22[0]) {
 			int years = getday11[0]-getday22[0];
-			lefted = years+"³â Àü";	
+			lefted = years+"ï¿½ï¿½ ï¿½ï¿½";	
 		}else if(getday11[1]!=getday22[1]) {
 			int months = getday11[1]-getday22[1];
-			lefted=months+"°³¿ù Àü";	
+			lefted=months+"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½";	
 		}else if(getday11[2]!=getday22[2]) {
 			int days = getday11[2]-getday22[2];
-			lefted=days+"ÀÏ Àü";		
+			lefted=days+"ï¿½ï¿½ ï¿½ï¿½";		
 		}else if(getday11[3]!=getday22[3]) {
 			int hours = getday11[3]-getday22[3];
-			lefted=hours+"½Ã°£ Àü";
+			lefted=hours+"ï¿½Ã°ï¿½ ï¿½ï¿½";
 		}else if(getday11[4]!=getday22[4]) {
 			int minutes = getday11[4]-getday22[4];
-			lefted=minutes+"ºÐ Àü";
+			lefted=minutes+"ï¿½ï¿½ ï¿½ï¿½";
 		}else {
 			int seconds = getday11[5]-getday22[5];
-			lefted=seconds+"ÃÊ Àü";		
+			lefted=seconds+"ï¿½ï¿½ ï¿½ï¿½";		
 		}
 		email_dto.get(j).setLefted(lefted);
 	}

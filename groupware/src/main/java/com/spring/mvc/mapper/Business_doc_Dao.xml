@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mvc.business_doc.Business_doc_Dao">
+	<select id="selectAll"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM
+		ORDER BY
+		APPROVED_DATE
+	</select>
+
+	<select id="select_id"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND
+		MEMBER.MEMBER_ID = #{param1}
+		ORDER BY BUSINESS_NUM
+	</select>
+
+
+	<select id="select_director_one"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION,GROUP_TB WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND
+		MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM AND MEMBER.GROUP_NUM = #{param1} AND
+		BUSINESS_DOC.CONDITION_NUM = 1
+		ORDER BY BUSINESS_DATE desc
+	</select>
+	
+	<select id="select_director_two"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION,GROUP_TB WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND
+		MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM AND MEMBER.GROUP_NUM = #{param1} AND
+		BUSINESS_DOC.CONDITION_NUM = 2
+		ORDER BY BUSINESS_DATE desc
+	</select>
+	
+	<select id="select_director_three"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION,GROUP_TB WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND
+		MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM AND MEMBER.GROUP_NUM = #{param1} AND
+		BUSINESS_DOC.CONDITION_NUM = 3
+		ORDER BY BUSINESS_DATE desc
+	</select>
+
+
+	<insert id="insert">
+		INSERT INTO BUSINESS_DOC
+		(BUSINESS_NUM,BUSINESS_TITLE,BUSINESS_CONTENT,BUSINESS_DATE,MEMBER_ID,APPROVAL_CATEGORY_NUM,CONDITION_NUM)
+		VALUES(SEQ_BUSINESS.NEXTVAL,#{param1},#{param2},SYSDATE,#{param3},#{param4},#{param5})
+
+	</insert>
+	<!-- 멤버 조인 -->
+	<select id="select_member"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+	FROM MEMBER,GROUP_TB,POSITION
+    WHERE  MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM AND MEMBER.POSITION_NUM = POSITION.POSITION_NUM AND MEMBER_ID = #{param1}
+	</select>
+
+	<delete id="delete">
+		DELETE FROM BUSINESS_DOC WHERE BUSINESS_NUM =
+		#{param1} AND MEMBER_ID = #{param2}
+	</delete>
+
+	<select id="select"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM
+		AND
+		BUSINESS_DOC.BUSINESS_NUM
+		= #{param1}
+		ORDER BY APPROVED_DATE
+	</select>
+
+	<update id="update">
+		UPDATE BUSINESS_DOC SET
+		BUSINESS_TITLE=#{param1},BUSINESS_CONTENT=#{param2},BUSINESS_DATE=SYSDATE,APPROVAL_CATEGORY_NUM=#{param3},CONDITION_NUM=#{param4}
+		WHERE BUSINESS_NUM =#{param5} AND MEMBER_ID = #{param6}
+
+	</update>
+
+	<update id="update_Companion">
+		UPDATE BUSINESS_DOC SET
+		BUSINESS_TITLE=#{param1},BUSINESS_CONTENT=#{param2},CONDITION_NUM = 1,
+		APPROVAL_CATEGORY_NUM=#{param3}
+		WHERE BUSINESS_NUM =#{param4} AND MEMBER_ID = #{param5}
+
+	</update>
+	<select id="getAllCount" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM
+		BUSINESS_DOC WHERE MEMBER_ID = #{member_id}
+	</select>
+
+	<!-- 결재 승인 주기 -->
+	<update id="update_condition_num">
+		UPDATE BUSINESS_DOC SET CONDITION_NUM =
+		#{param1},APPROVED_DATE = SYSDATE
+		WHERE BUSINESS_NUM =#{param2}
+	</update>
+
+	<!-- 결재 승인 리스트 불러오기 -->
+	<select id="select_condition_num"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND
+		MEMBER.MEMBER_ID = #{param1} AND
+		BUSINESS_DOC.CONDITION_NUM = #{param2}
+		ORDER BY BUSINESS_DATE DESC
+	</select>
+
+	<!-- 전체 진행중 리스트 불러오기 -->
+	<select id="select_All_condition_num"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND
+		BUSINESS_DOC.CONDITION_NUM = #{param1}
+		ORDER BY BUSINESS_DATE desc
+	</select>
+	
+	<!-- 전체 진행중 리스트 불러오기 -->
+	<select id="select_All_Companion"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE
+		BUSINESS_DOC.MEMBER_ID =
+		MEMBER.MEMBER_ID AND
+		BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND
+		BUSINESS_DOC.CONDITION_NUM = 3
+		ORDER BY BUSINESS_DATE desc
+	</select>
+
+
+	<select id="list_business_date"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 날짜 */ -->
+		SELECT *
+		FROM BUSINESS_DOC,MEMBER,CONDITION 
+		WHERE BUSINESS_DOC.MEMBER_ID = MEMBER.MEMBER_ID 
+		AND BUSINESS_DOC.CONDITION_NUM = CONDITION.CONDITION_NUM
+		AND TO_CHAR(BUSINESS_DATE,'yyyy-mm-dd') LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+
+	<select id="list_business_title"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 제목 */ -->
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE BUSINESS_DOC.MEMBER_ID
+		=
+		MEMBER.MEMBER_ID AND BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND BUSINESS_TITLE LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		ORDER BY
+		BUSINESS_NUM DESC
+	</select>
+
+
+	<select id="list_business_content"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 내용 */ -->
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE BUSINESS_DOC.MEMBER_ID
+		=
+		MEMBER.MEMBER_ID AND BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND BUSINESS_CONTENT LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		
+		ORDER BY
+		BUSINESS_NUM DESC
+	</select>
+	<select id="list_business_name"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 내용 */ -->
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE BUSINESS_DOC.MEMBER_ID
+		=
+		MEMBER.MEMBER_ID AND BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND MEMBER_NAME  LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+
+	<select id="list_group_date"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 날짜 */ -->
+		SELECT * FROM
+		BUSINESS_DOC,MEMBER,CONDITION
+		WHERE BUSINESS_DOC.MEMBER_ID = MEMBER.MEMBER_ID 
+		AND BUSINESS_DOC.CONDITION_NUM = CONDITION.CONDITION_NUM
+		AND TO_CHAR(BUSINESS_DATE,'yyyy-mm-dd') LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		AND GROUP_NUM = #{param3}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+
+	<select id="list_group_title"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 제목 */ -->
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE BUSINESS_DOC.MEMBER_ID
+		=
+		MEMBER.MEMBER_ID AND BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND BUSINESS_TITLE LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		AND GROUP_NUM = #{param3}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+
+
+	<select id="list_group_content"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 내용 */ -->
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE BUSINESS_DOC.MEMBER_ID
+		=
+		MEMBER.MEMBER_ID AND BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND BUSINESS_CONTENT LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		AND GROUP_NUM = #{param3}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+
+
+	<select id="list_group_name"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 임원용 이름검색 */ -->
+		SELECT *
+		FROM
+		BUSINESS_DOC,MEMBER,CONDITION WHERE BUSINESS_DOC.MEMBER_ID
+		=
+		MEMBER.MEMBER_ID AND BUSINESS_DOC.CONDITION_NUM =
+		CONDITION.CONDITION_NUM AND MEMBER.MEMBER_NAME LIKE #{param1}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param2}
+		AND GROUP_NUM = #{param3}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+
+	<select id="list_business_id_date"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 사원용 날짜*/ -->
+		SELECT *
+		FROM BUSINESS_DOC,MEMBER,CONDITION 
+		WHERE BUSINESS_DOC.MEMBER_ID = MEMBER.MEMBER_ID 
+		AND BUSINESS_DOC.CONDITION_NUM = CONDITION.CONDITION_NUM 
+		AND MEMBER.MEMBER_ID = #{param1} 
+		AND TO_CHAR(BUSINESS_DATE,'yyyy-mm-dd') LIKE #{param2}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param3}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+	<select id="list_business_id_content"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		<!-- /* 사원용 내용*/ -->
+		SELECT *
+		FROM BUSINESS_DOC,MEMBER,CONDITION 
+		WHERE BUSINESS_DOC.MEMBER_ID = MEMBER.MEMBER_ID 
+		AND BUSINESS_DOC.CONDITION_NUM = CONDITION.CONDITION_NUM 
+		AND MEMBER.MEMBER_ID = #{param1} 
+		AND BUSINESS_CONTENT LIKE #{param2}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param3}
+		ORDER BY BUSINESS_NUM DESC
+	</select>
+
+
+	<select id="list_business_id_title"
+		resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+
+		<!-- /* 사원용 제목 */ -->
+		SELECT *
+		FROM BUSINESS_DOC,MEMBER,CONDITION 
+		WHERE BUSINESS_DOC.MEMBER_ID = MEMBER.MEMBER_ID 
+		AND BUSINESS_DOC.CONDITION_NUM = CONDITION.CONDITION_NUM 
+		AND MEMBER.MEMBER_ID = #{param1} 
+		AND BUSINESS_TITLE LIKE #{param2}
+		AND BUSINESS_DOC.CONDITION_NUM = #{param3}
+		ORDER BY BUSINESS_NUM DESC
+
+	</select>
+	
+	<select id="business_main_list" resultType="com.spring.mvc.business_doc.Business_doc_Dto">
+		select * from BUSINESS_DOC, member, GROUP_TB, POSITION  where <![CDATA[ rownum <= 5 ]]> AND MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM AND MEMBER.POSITION_NUM = POSITION.POSITION_NUM AND MEMBER.MEMBER_ID = BUSINESS_DOC.MEMBER_ID
+		AND (MEMBER.MEMBER_ID = #{param1} or (#{param2} = GROUP_TB.GROUP_NUM AND #{param3} >=3) or #{param3} > 4)
+		order by BUSINESS_NUM desc
+	</select>
+
+</mapper>

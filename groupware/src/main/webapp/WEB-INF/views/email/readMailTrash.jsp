@@ -1,0 +1,69 @@
+<%@page import="com.spring.mvc.email.DtoEmail"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<%-- <td colspan=2 align=center><a href="delete?mail_num=${listMail.mail_num}&member_id=${listMail.member_id}&mail_rcvmember=${listMail.mail_rcvmember}&rcv=${listMail.rcv}&send=${listMail.send}">삭제</a></td> --%>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+	function sndata(num,id,rcvmember,rcv,send){
+		if (confirm("정말 삭제하시겠습니까??") == true){    //확인
+			location.href="delete?mail_num="+num+"&member_id="+id+"&mail_rcvmember="+rcvmember+"&rcv="+rcv+"&send="+send;
+		    document.form.submit();
+		}else{   //취소
+		    return;
+		}
+	}
+</script>
+<style type="text/css">
+.readmail{
+	width:98%;
+}
+#conten{
+padding:5% 5%;
+}
+</style>
+</head>
+<body>
+<%
+	pageContext.setAttribute("br","<br/>");
+	pageContext.setAttribute("cn","\n");
+%>
+	<table class="readmail">
+		<tr>
+			<td></td><td></td>
+			<td colspan=4>　</td>
+		</tr>
+		<tr>
+			<td></td><td></td>
+			<td><strong>보낸사람</strong></td><td><a href="writeMailClick?mail_rcvmember=${listMail.member_id}">${listMail.member_id}</a></td>
+			<td><strong>보낸시간</strong></td><td><fmt:formatDate value="${listMail.mail_senddate}" pattern="yy-MM-dd hh:mm:ss"/></td>
+		</tr>
+		<tr>
+			<td></td><td></td>
+			<td><strong>받을사람</strong></td><td><a href="writeMailClick?mail_rcvmember=${listMail.mail_rcvmember}">${listMail.mail_rcvmember}</a></td>
+			<td><strong>받은시간</strong></td><td><fmt:formatDate value="${listMail.mail_rcvdate}" pattern="yy-MM-dd hh:mm:ss"/></td>
+		</tr>
+		<tr>
+			<td></td><td></td>
+			<td><strong>제목</strong></td><td colspan=3>${listMail.mail_title}</td>
+		</tr>
+		<tr>
+			<td></td><td></td>
+			<td id="conten" colspan=4>${fn:replace(listMail.mail_content,cn,br)}</td>
+		</tr>
+		<tr>
+			<td></td><td></td>	<!-- ${listMail.mail_num},${listMail.member_id},${listMail.mail_rcvmember},${listMail.rcv},${listMail.send}) -->
+			<%-- <td colspan=2 align=center><a href="delete?mail_num=${listMail.mail_num}&member_id=${listMail.member_id}&mail_rcvmember=${listMail.mail_rcvmember}&rcv=${listMail.rcv}&send=${listMail.send}">삭제</a></td> --%>
+			<td colspan=2 align=center><a href="javascript:sndata(${listMail.mail_num},'${listMail.member_id}','${listMail.mail_rcvmember}',${listMail.rcv},${listMail.send})">삭제</a></td>
+			<td colspan=2 align=center><a href="recoverMailTrash?mail_num=${listMail.mail_num}&member_id=${listMail.member_id}&mail_rcvmember=${listMail.mail_rcvmember}">복원</a></td>
+		</tr>
+	</table>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mvc.board.BoardDao">
+	
+	<insert id="board_write">
+		insert into board (board_num, member_id, board_title, board_content,board_regdate,board_readcount, board_ref, board_re_step, board_re_level,notice_num)
+		values (seq_board.nextval, #{param1},#{param2},#{param3},sysdate,0,seq_board.currval, 0, 0,#{param4})
+	</insert>
+	
+	
+	<select id = "board_list" resultType="com.spring.mvc.board.BoardDto">
+		select board_num, member_id, board_title, board_content, board_regdate, board_readcount, board_ref, board_re_step, board_re_level 
+		from board order by board_ref desc, board_re_step asc
+	</select>
+	
+	<select id = "board_list2" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_regdate, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level, m.member_name
+		from board b,member m 
+		where b.member_id = m.member_id and b.NOTICE_NUM = 2 order by board_ref desc, board_re_step asc
+	</select>
+
+	<select id = "board_list3" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_regdate, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level, m.member_name
+		from board b,member m 
+		where b.member_id = m.member_id and b.NOTICE_NUM = 1 order by board_ref desc, board_re_step ASC 
+	</select>	
+	
+	<select id = "board_list_title" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_regdate, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level, m.member_name
+		from board b,member m 
+		where b.member_id = m.member_id and b.NOTICE_NUM = 2 and b.board_title like #{b.board_title} order by board_ref desc, board_re_step ASC 
+	</select>
+	
+	<select id = "board_list_content" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_regdate, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level, m.member_name
+		from board b,member m 
+		where b.member_id = m.member_id and b.NOTICE_NUM = 2 and b.board_content like #{b.board_content} order by board_ref desc, board_re_step ASC 
+	</select>
+	
+	<select id = "board_list_name" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_regdate, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level, m.member_name
+		from board b,member m 
+		where b.member_id = m.member_id and b.NOTICE_NUM = 2 and m.member_name like #{m.member_name} order by board_ref desc, board_re_step ASC 
+	</select>
+	
+	<select id = "board_list_title_content" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_regdate, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level, m.member_name
+		from board b,member m 
+		where b.member_id = m.member_id and b.NOTICE_NUM = 2 and (b.board_title like #{b.board_title} or b.board_content like #{b.board_content}) order by board_ref desc, board_re_step ASC 
+	</select>
+	
+	<!-- <select id="contentView" resultType="com.spring.mvc.board.BoardDto">
+		select board_num, member_id, board_title, board_content, board_readcount, board_ref, board_re_step, board_re_level,notice_num from board
+		where board_num = #{param1} 
+	</select> -->
+	
+	<select id="board_contentView" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level,b.notice_num,m.member_name
+		from board b,member m
+		where b.member_id = m.member_id and board_num = #{param1} 
+	</select>
+	
+	
+	<update id="board_modify">
+	update board set member_id = #{param2}, board_title = #{param3}, board_content = #{param4} 
+	where board_num = #{param1}
+	</update>
+	
+	
+	<delete id="board_delete">
+		delete from board where board_num = #{param1}
+	</delete>
+	
+	
+	<select id="board_reply_view">
+		select  board_num, member_id, board_title, board_content, board_readcount, board_ref, board_re_step, board_re_level from board where board_num = #{param1}
+	</select>	
+	
+		
+	
+	<insert id="board_reply">
+	insert into board 
+	(board_num, member_id, board_title, board_content,board_regdate,board_readcount, board_ref, board_re_step, board_re_level,notice_num) 
+		values 
+	(seq_board.nextval, #{param2}, #{param3}, #{param4},sysdate,0,#{param5}, #{param6}, #{param7},2)
+	</insert>
+	
+	
+	<update id="board_replyShape">
+		update board set 
+		board_re_step = board_re_step + 1 
+		where board_ref = #{param1} and board_re_step > #{param2}
+	</update>
+	
+	<update id="board_upHit">
+		update board set 
+		board_readcount = board_readcount + 1 
+		where board_num = #{param1}
+	</update>
+	
+	<select id = "board_list_notice" resultType="com.spring.mvc.board.BoardDto">
+		select b.board_num, b.member_id, b.board_title, b.board_content, b.board_regdate, b.board_readcount, b.board_ref, b.board_re_step, b.board_re_level, m.member_name
+		from board b,member m 
+		where b.member_id = m.member_id and b.NOTICE_NUM=1 <![CDATA[ AND ROWNUM <= 5 ]]> ORDER BY BOARD_NUM DESC 
+	</select>
+	
+	<select id="board_member1" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT *
+		FROM MEMBER,GROUP_TB,POSITION
+		WHERE MEMBER.POSITION_NUM = POSITION.POSITION_NUM AND MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM
+		AND GROUP_TB.GROUP_NUM=1 AND POSITION.POSITION_NUM!=5 AND MEMBER_EXIST = 'Y' ORDER BY POSITION.POSITION_NUM DESC
+	</select>
+	
+	<select id="board_member2" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT *
+		FROM MEMBER,GROUP_TB,POSITION
+		WHERE MEMBER.POSITION_NUM = POSITION.POSITION_NUM AND MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM
+		AND GROUP_TB.GROUP_NUM=2 AND POSITION.POSITION_NUM!=5 AND MEMBER_EXIST = 'Y' ORDER BY POSITION.POSITION_NUM DESC
+	</select>
+	
+	<select id="board_member3" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT *
+		FROM MEMBER,GROUP_TB,POSITION
+		WHERE MEMBER.POSITION_NUM = POSITION.POSITION_NUM AND MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM
+		AND GROUP_TB.GROUP_NUM=3 AND POSITION.POSITION_NUM!=5 AND MEMBER_EXIST = 'Y' ORDER BY POSITION.POSITION_NUM DESC
+	</select>
+	
+	<select id="board_member4" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT *
+		FROM MEMBER,GROUP_TB,POSITION
+		WHERE MEMBER.POSITION_NUM = POSITION.POSITION_NUM AND MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM
+		AND POSITION.POSITION_NUM=5  AND MEMBER_EXIST = 'Y'
+	</select>
+	
+	<select id="board_member_info" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT *
+		FROM MEMBER,GROUP_TB,POSITION
+		WHERE MEMBER.POSITION_NUM = POSITION.POSITION_NUM AND MEMBER.GROUP_NUM = GROUP_TB.GROUP_NUM
+		AND MEMBER.MEMBER_ID = #{param1}
+	</select>
+	
+	<update id="member_update">
+	update member set group_num = #{param2}, position_num = #{param3}
+	where member_id = #{param1}
+	</update>	
+	
+</mapper>

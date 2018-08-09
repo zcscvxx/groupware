@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mvc.events.Events_Dao">
+
+	<insert id="insert">
+		INSERT INTO EVENTS(EVENT_ID, EVENT_NAME, START_DATE, END_DATE, MEMBER_ID, SAME_DATA)
+		VALUES(SEQ_EVENT.NEXTVAL, #{event_name}, #{start_date}, #{end_date}, #{member_id}, #{same_data})
+	</insert>
+	
+	<select id="selectAll" resultType="com.spring.mvc.events.Events_Dto">
+		SELECT * FROM EVENTS
+	</select>
+	
+	<select id="select" resultType="com.spring.mvc.events.Events_Dto">
+		SELECT * FROM EVENTS AS E, MEMBER AS M WHERE E.EVENT_ID = #{event_id} AND E.MEMBER_ID = #{member_id} AND M.MEMBER_ID = E.MEMBER_ID
+	</select>
+	
+	<select id="selectByKey" resultType="com.spring.mvc.events.Events_Dto">
+		SELECT * FROM EVENTS, MEMBER WHERE MEMBER.MEMBER_ID = EVENTS.MEMBER_ID AND EVENTS.EVENT_ID = #{event_id}
+	</select>
+	
+	<select id="selectById" resultType="com.spring.mvc.events.Events_Dto">
+		SELECT * FROM EVENTS WHERE MEMBER_ID = #{member_id}
+	</select>
+	
+	<delete id="delete">
+		DELETE FROM EVENTS WHERE EVENT_ID = #{param1} AND MEMBER_ID = #{param2}
+	</delete>
+	
+	<delete id="deleteSameData">
+		DELETE FROM EVENTS WHERE ((SELECT EVENT_NAME FROM EVENTS WHERE EVENT_ID = #{param1}) LIKE (SELECT EVENT_NAME FROM EVENTS WHERE EVENT_ID = #{param1}+1) AND SAME_DATA=2) OR
+		((SELECT EVENT_NAME FROM EVENTS WHERE EVENT_ID = #{param1}) LIKE (SELECT EVENT_NAME FROM EVENTS WHERE EVENT_ID = #{param1}-1) AND SAME_DATA=2)
+	</delete>
+	
+	<update id="update">
+		UPDATE EVENTS SET EVENT_NAME = #{event_name}, START_DATE = #{start_date}, END_DATE = #{end_date}
+		WHERE EVENT_ID = #{event_id} AND MEMBER_ID = #{member_id}
+	</update>
+	
+	<select id="selectDate" resultType="com.spring.mvc.events.Events_Dto">
+		SELECT event_id, event_name, start_date, end_date, same_data, member_id, (end_date - start_date) as count FROM EVENTS WHERE START_DATE >= #{param1} AND END_DATE <![CDATA[ <= ]]> #{param2} ORDER BY COUNT DESC, START_DATE, EVENT_ID
+	</select>
+	
+	<select id="selectTodayEvent" resultType="com.spring.mvc.events.Events_Dto">
+		SELECT * FROM EVENTS, MEMBER WHERE EVENTS.MEMBER_ID = MEMBER.MEMBER_ID AND EVENTS.START_DATE <![CDATA[ <= ]]> TO_CHAR(SYSDATE,'yyyy-mm-dd') AND EVENTS.END_DATE >= TO_CHAR(SYSDATE,'yyyy-mm-dd')
+	</select>
+</mapper>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mvc.email.IDaoEmail">
+
+	<select id="listMail" resultType="com.spring.mvc.email.DtoEmail">
+		select mail_num,mail_title,mail_content,mail_senddate,mail_rcvdate,member_id,mail_rcvmember,rcv,send  
+		from email 
+		where mail_num =#{param1}
+	</select>
+	
+	<select id="listRecentMail" resultType="com.spring.mvc.email.DtoEmail">
+		select mail_num,mail_title,member_id,mail_senddate,num from(
+		select mail_num,mail_title,member_id,mail_senddate,rownum as num from(
+		select mail_num,mail_title,member_id,mail_senddate from email 
+		where mail_rcvmember =#{param1} and rcv=1 order by mail_num desc)) 
+		where num between 1 and 5
+	</select>
+	
+	<select id="listRcvMail" resultType="com.spring.mvc.email.DtoEmail">
+		select mail_num,mail_title,member_id,mail_senddate,mail_rcvdate,num from(
+		select mail_num,mail_title,member_id,mail_senddate,mail_rcvdate,rownum as num from(
+		select mail_num,mail_title,member_id,mail_senddate,mail_rcvdate from email 
+		where mail_rcvmember =#{param1} and rcv=1 order by mail_num desc)) 
+		where num between #{param2} and #{param3}
+	</select>
+	
+	<select id="listTrashMail" resultType="com.spring.mvc.email.DtoEmail">
+		select mail_num,mail_title,member_id,mail_rcvmember,mail_senddate,mail_rcvdate,num from(
+		select mail_num,mail_title,member_id,mail_rcvmember,mail_senddate,mail_rcvdate,rownum as num from(
+		select mail_num,mail_title,member_id,mail_rcvmember,mail_senddate,mail_rcvdate from email 
+		where (mail_rcvmember =#{param1} and rcv=0) or (member_id = #{param1} and send=0) order by mail_num desc)) 
+		where num between #{param2} and #{param3}
+	</select>
+	
+	<select id="listSaveMail" resultType="com.spring.mvc.email.DtoEmail">
+		select mail_num,mail_title,member_id,mail_rcvmember,mail_senddate,mail_rcvdate,num from(
+		select mail_num,mail_title,member_id,mail_rcvmember,mail_senddate,mail_rcvdate,rownum as num from(
+		select mail_num,mail_title,member_id,mail_rcvmember,mail_senddate,mail_rcvdate from email 
+		where (mail_rcvmember =#{param1} and rcv=2) or (member_id = #{param1} and send=2) order by mail_num desc)) 
+		where num between #{param2} and #{param3}
+	</select>
+	
+	
+	<update id="rcvtime">
+		update email set mail_rcvdate=sysdate where mail_num = #{param1}
+	
+	</update>
+	
+	<select id="listSendMail" resultType="com.spring.mvc.email.DtoEmail">
+		select mail_num,mail_title,mail_rcvmember,mail_senddate,mail_rcvdate,num from(
+		select mail_num,mail_title,mail_rcvmember,mail_senddate,mail_rcvdate,rownum as num from(
+		select mail_num,mail_title,mail_rcvmember,mail_senddate,mail_rcvdate from email 
+		where member_id =#{param1} and send=1 order by mail_num desc))
+		where num between #{param2} and #{param3}
+	
+	</select>
+	
+	<insert id="insertMail">
+		insert into email(mail_num,mail_title,mail_content,mail_senddate,member_id,mail_rcvmember,rcv,send) 
+		       values(seq_mail.nextval,#{param1},#{param2},sysdate,#{param3},#{param4},1,1)
+	</insert>
+	
+	<delete id="deleteMail">
+		delete from email 
+			   where mail_num=#{param1}
+	</delete>
+	
+	<select id="rcvcount" resultType="int">
+		select count(*) 
+		from email 
+		where mail_rcvmember =#{param1} and rcv=1
+	</select>
+	
+	<select id="trashcount" resultType="int">
+		select count(*) 
+		from email 
+		where (mail_rcvmember =#{param1} and rcv=0) or (member_id = #{param1} and send=0)
+	</select>
+	
+	<select id="savecount" resultType="int">
+		select count(*) 
+		from email 
+		where (mail_rcvmember =#{param1} and rcv=2) or (member_id = #{param1} and send=2)
+	</select>
+	
+	<select id="sendcount" resultType="int">
+		select count(*) 
+		from email 
+		where member_id = #{param1} and send=1
+	
+	</select>
+	
+	<select id="testdate" resultType="String">
+		select  mail_senddate <!--to_char(MAIL_SENDDATE, 'YYYY-MM-DD HH:MI:SS')-->
+		from email
+		where MAIL_NUM=#{param1}
+	</select>
+	
+	<update id="moveTrashRcv">
+		update email
+		set rcv=0
+		where mail_num=#{param1}
+	</update>
+	
+	<update id="moveTrashSend">
+		update email
+		set send=0
+		where mail_num=#{param1}
+	</update>
+	
+	<update id="moveSendMail">
+		update email
+		set send=1
+		where mail_num=#{param1}
+	</update>
+	
+	<update id="moveRcvMail">
+		update email
+		set rcv=1
+		where mail_num=#{param1}
+	</update>
+	
+	<update id="moveSaveRcv">
+		update email
+		set rcv=2
+		where mail_num=#{param1}
+		
+	</update>
+	
+	<update id="moveSaveSend">
+		update email
+		set send=2
+		where mail_num=#{param1}
+	</update>
+	
+	
+	<update id="makeMinusRcv">
+		update email
+		set rcv=-1
+		where mail_num=#{param1}
+	</update>
+	
+	<update id="makeMinusSend">
+		update email
+		set send=-1
+		where mail_num=#{param1}
+	</update>
+	
+	<select id="mailWriteMember" resultType = "com.spring.mvc.member.MemberDTO">
+		select member_id,member_name
+		from member
+		where member_exist = 'Y'
+	</select>
+	
+	<select id="receivercnt" resultType="int">
+		select count(*)
+		from member
+		where member_id = #{param1}
+	</select>
+	
+</mapper>

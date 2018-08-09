@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.mvc.member.Member_Dao">
+
+	<sql id="Member1">
+	MEMBER_ID,MEMBER_NAME,MEMBER_PASSWORD,MEMBER_PHONE,MEMBER_EMAIL,
+	MEMBER_ADDRESS,POSITION_NUM,GROUP_NUM,MEMBER_EXIST
+	</sql>
+	
+	<select id="select" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT
+			<include refid="Member1"/>
+		FROM MEMBER
+		WHERE MEMBER_ID = #{member_id}
+	</select>
+	
+	<select id="login" resultType="int">
+		SELECT COUNT(*) FROM MEMBER
+		WHERE MEMBER_ID = #{member_id} AND MEMBER_PASSWORD = #{member_password} AND MEMBER_EXIST = 'Y'
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO MEMBER(<include refid="Member1" />)
+		VALUES (#{param1},#{param2},#{param3},#{param4,jdbcType=VARCHAR},
+		#{param5},#{param6},#{param7},#{param8},'Y')	
+	</insert>
+	
+	<select id="selectAll" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT * FROM MEMBER
+	</select>
+	
+	<select id="passcheck" resultType="int">
+		SELECT COUNT(*) FROM MEMBER
+		WHERE MEMBER_ID = #{param1,jdbcType=VARCHAR} AND MEMBER_PASSWORD = #{param2,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<select id="select_id" resultType="com.spring.mvc.member.MemberDTO">
+		SELECT *
+		FROM MEMBER,position,GROUP_TB
+		WHERE MEMBER.POSITION_NUM = position.POSITION_NUM and GROUP_TB.GROUP_NUM = MEMBER.GROUP_NUM and MEMBER_ID = #{param1}
+	</select>
+	
+	<!-- 테스트-->
+	<select id="checkidview" resultType="int">
+		SELECT COUNT(*)
+		FROM MEMBER
+		WHERE MEMBER_ID = #{member_id}
+	</select>
+	
+	<delete id="delete" >
+	 DELETE
+	 FROM MEMBER
+	 WHERE MEMBER_ID = #{param1,jdbcType=VARCHAR} AND MEMBER_PASSWORD = #{param2,jdbcType=VARCHAR} ON DELETE CASCADE
+	</delete>
+	
+	<update id="update">
+	UPDATE MEMBER SET
+		MEMBER_PHONE = #{param1},
+		MEMBER_EMAIL = #{param2},
+		MEMBER_ADDRESS = #{param3}
+	WHERE MEMBER_ID = #{param4} 
+	</update>
+	
+	<update id="delete_member">
+	UPDATE MEMBER SET MEMBER_EXIST = 'N'
+	WHERE MEMBER_ID = #{param1} AND MEMBER_PASSWORD = #{param2}
+	</update>
+	
+</mapper>
